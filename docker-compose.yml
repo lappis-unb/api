@@ -1,0 +1,61 @@
+version: "3.2"
+
+services:
+  db:
+    image: mongo
+    container_name: db
+    restart: always
+    ports:
+      - ${DB_PORT}:27017
+    volumes:
+      - ./database-data:/data/db  
+    environment:
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+      # MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      # MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express-test
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+    #   ME_CONFIG_MONGODB_ADMINUSERNAME: root 
+    #   ME_CONFIG_MONGODB_ADMINPASSWORD: example 
+      ME_CONFIG_MONGODB_URL: mongodb://db/    
+
+  backend:
+    image: api
+    # volumes:
+    #   - ./backend:/backend
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    # command: bash -c "cd /backend && npm i && node app"
+    depends_on:
+      - db      
+
+  frontend:
+    image: app-web
+    ports: 
+      - 3001:3000        
+    depends_on:
+      - backend     
+
+  # api:
+  #   image: node:latest
+  #   container_name: api
+  #   restart: always
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - ${SERVER_PORT}:${SERVER_PORT}
+  #   volumes:
+  #     - .:/user/src/app
+  #   working_dir: /usr/src/app
+  #   command: node app.js
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "5"
