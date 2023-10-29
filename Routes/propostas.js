@@ -95,6 +95,7 @@ router.get('/busca/:query/:evento', function(req, res, next) {
     query = query.replaceAll('-','/');
 
     console.log('query ', query, ' ',evento)
+    
 
     if((!query) && (!evento))
        return res.render([]);
@@ -105,7 +106,9 @@ router.get('/busca/:query/:evento', function(req, res, next) {
        if (evento === '2') { escopo = 'ppaparticip'}
        if (evento === '3') { escopo = 'confjuv4'}
    
-       let campo = query + ' ' + escopo;
+       if (query === 'x') {campo = escopo}
+       else {campo = query + ' ' + escopo;}
+
        campo = campo.split(' ');
        //let campo = query + ' ' + escopo; 
        //console.log('req.query=',req.query, 'campo=',campo);

@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 const indexRoute = require('./Routes/index')
 const usersRoute = require('./Routes/users')
-const fileRoute = require('./Routes/file');
+//const fileRoute = require('./Routes/file');
 const mensagemRoute = require('./Routes/mensagens');
 const temaRoute = require('./Routes/temas');
 const propostasRoute = require('./Routes/propostas');
@@ -60,9 +60,14 @@ const reunioesRoute = require('./Routes/reunioes')
  //mongoose.connect(url, options);
  //mongoose.set('useCreateIndex', true)
 
- mongoose.connect(
-    'mongodb://127.0.0.1:27017/http_app', 
-    {useNewUrlParser: true, useUnifiedTopology: true }); 
+//  mongoose.connect(
+//     'mongodb://db/http_app', 
+//     {useNewUrlParser: true, useUnifiedTopology: true }); 
+
+
+    mongoose.connect(
+        'mongodb://127.0.0.1:27017/http_app', 
+        {useNewUrlParser: true, useUnifiedTopology: true }); 
 
     // mongoose.connect(
     //     'mongodb://db/http_app', 
@@ -82,7 +87,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', indexRoute);
 app.use('/users', usersRoute);
-app.use('/file', fileRoute);
+//app.use('/file', fileRoute);
 app.use('/mensagens', mensagemRoute);
 app.use('/temas', temaRoute);
 app.use('/propostas', propostasRoute);
@@ -90,6 +95,6 @@ app.use('/propostacomentarios', propostaComentariosRoute);
 app.use('/numeros', numerosRoute);
 app.use('/reunioes', reunioesRoute)
 
-app.listen(4000, () => console.log("Server is running - port 4000"));
+app.listen(4040, () => console.log("Server is running - port 4040"));
 
 module.exports = app;
