@@ -24,14 +24,25 @@ router.get('/total', async (req, res) => {
 })
 
 router.post('/create', async (req, res) => {
-
+    res.setHeader("Access-Control-Allow-Origin", "*");    
     console.log("req.body ", req.body)
+
     let moderacoes = new Moderacoes({
         id: req.body.id, 
         body: req.body.body,
         evento: req.body.evento,
         estado: req.body.estado
-    });    
+    });        
+
+    // Moderacoes.find({"id": req.body.id})
+    //   .then((moderacao) => {
+    //     moderacao.id = req.body.id; 
+    //     moderacao.body = req.body.body;
+    //     moderacao.evento = req.body.evento;
+    //     moderacao.estado = req.body.estado;        
+    //     moderacoes = moderacao;
+    //   });
+
     try {
         const moderacaoCadastrada = await moderacoes.save();
         res.status(200).json(moderacaoCadastrada)
@@ -39,6 +50,61 @@ router.post('/create', async (req, res) => {
         res.status(500).json(err);
     }
 })
+
+router.post('/atualiza', async (req, res) => {
+
+    console.log('moderação patch ', req.body.id,' ',req.body.body,' ',req.body.propostas_total);
+
+    await Moderacoes.findById(req.body._id).then((moderacao) => {
+        //console.log('*',moderacao)
+        moderacao.id = req.body.id;
+        moderacao.created_at = req.body.created_at;
+        moderacao.body = req.body.body; 
+        moderacao.evento = moderacao.evento; 
+        moderacao.propostas_total = req.body.propostas_total; 
+        moderacao.propostas_verificadas = req.body.propostas_verificadas; 
+        moderacao.propostas_pendentes = req.body.propostas_pendentes; 
+        moderacao.estado = req.body.estado;
+
+        moderacao.save();
+
+        // moderacao.save((err, moderacao)=>{
+        //     if (err)
+        //         res.status(500).send(err);                
+        //     else
+        //         res.status(200).send(moderacao);
+        // })
+    }).catch((error) => {
+        res.status(500).send(error);
+    })        
+})
+
+    // Moderacoes.findById(req.body._id, (err, moderacao) => {
+    //     if (err)
+    //         res.status(500).send(err);
+    //     else if (!art)
+    //         res.status(404).send({});
+    //     else {
+    //         moderacao.id = req.body.id,
+    //         moderacao.created_at = req.body.created_at,
+    //         moderacao.body = req.body.body, 
+    //         moderacao.evento = moderacao.evento, 
+    //         moderacao.propostas_total = req.body.propostas_total, 
+    //         moderacao.propostas_verificadas = req.body.propostas_verificadas, 
+    //         moderacao.propostas_pendentes = req.body.propostas_pendentes, 
+    //         moderacao.estado = req.body.estado,
+    //         moderacao.save((err, moderacao)=>{
+    //             if (err)
+    //                 res.status(500).send(err);                
+    //             else
+    //                 res.status(200).send(moderacao);
+    //         })
+    //     }
+    // })
+
+
+
+
 
 // router.get('/categoria/:categoria', (req, res) => {
 //     res.setHeader("Access-Control-Allow-Origin", "*");

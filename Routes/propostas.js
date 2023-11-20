@@ -1,7 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const Propostas = require('../model/proposta');
+const Estatisticas = require('../model/estatistica');
 const { ObjectId } = require('mongodb');
+
+// var estatistica;
+
+// const buscaEstatistica = (categoria) => {
+//     console.log('buscaEstatistica ', categoria);
+//     Estatisticas.get(`/categoria/${categoria}`)
+//     // axios.get(`estatisticas/categoria/${categoria}`)
+//       .then(estatisticas => {
+//         if (estatisticas.data[0] !== undefined) {
+//           console.log(' categoria= ', categoria, 'estatisticas', estatisticas)
+//           estatistica = estatisticas[0].data;
+//         } else {
+//           estatistica = '';
+//         }
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       })
+//   }
+
+//   const gravaEstatistica = (estatistica) => {
+//     axios.get(`${URL_API_LOCAL}/estatisticas/create`, estatistica)
+//       .then(estatistica => {
+//           console.log(' gravou= ', estatistica)
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       })
+//   }  
+
 
 router.get('/', async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");        
@@ -13,6 +44,47 @@ router.get('/', async (req, res) => {
     }
 })
 
+// router.get('/estatistica', async (req, res) => {
+//     res.setHeader("Access-Control-Allow-Origin", "*");        
+//     //var resultadoEstatistica = [{}];
+//     try {
+//         const propostas = await Propostas.find({});
+
+//         console.log('propostas ', propostas.length);
+        
+//         propostas.map((proposta) => {
+
+//             buscaEstatistica(proposta.category_id)
+
+//             if (estatistica !== '') { 
+//                 estatistica.propostas = (estatistica.propostas + 1);
+//                 estatistica.supports = (estatistica.supports + proposta.supports);
+//                 estatistica.followers = (estatistica.followers + proposta.followers);
+//             }  
+//             else {
+//                 estatistica.id = proposta.category_id;
+//                 estatistica.category_id = proposta.category_id;
+//                 estatistica.category_name = proposta.category_name;
+//                 estatistica.participatory_space_id = proposta.participatory_space_id;
+//                 estatistica.participatory_space_url = proposta.participatory_space_url;
+//                 estatistica.data_num = proposta.published_at;
+//                 estatistica.propostas = 1;
+//                 estatistica.supports = proposta.supports;
+//                 estatistica.followers = proposta.followers;
+//             }
+
+//             gravaEstatistica(estatistica);
+            
+//         } )
+     
+//         console.log('tamanhos= ',propostas.length,' ', resultadoEstatistica.length)
+
+//         res.status(200).json(resultadoEstatistica)
+//     } catch (err) {
+//         res.status(500).json(err);
+//     }
+// })
+
 router.get('/total', async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");    
     try {
@@ -22,6 +94,96 @@ router.get('/total', async (req, res) => {
         res.status(500).json(err);
     }
 })
+
+router.get('/totalEvento/:tipo', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");    
+    tipo = req.params.tipo;
+    console.log('tipo =',tipo);
+    try {
+        escopo = 'confjuv4';
+        if (tipo === '2') { escopo = 'ppaparticip'}
+        if (tipo === '3') { escopo = 'confjuv4'}                 
+        //const propostas = await Propostas.find( {tags: escopo} ).count()
+        const propostas = await Propostas.aggregate([
+            {$match: { tags:escopo}},
+            {$group: {_id: escopo, propostas: {$sum: 1}, votos: {$sum: "$supports"}}}])        
+        console.log('totalEvento ',propostas[0])
+        res.status(200).json(propostas[0])
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.get('/totalCategoria', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");    // db.propostas.aggregate([{$group: {_id: "$category_name", votos: {$sum: "$supports"}, propostas: { $sum: 1 }}}])
+    try {
+        const propostas = await Propostas.aggregate([
+                               {$group: {_id: "$category_name", propostas: {$sum: 1}, votos: {$sum: "$supports"}}}
+                            ])
+                            
+        console.log('totalCategoria ',propostas)
+        res.status(200).json(propostas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.get('/totalCategoriaEvento/:evento', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");   
+    try {
+        const propostas = await Propostas.aggregate([
+                               {$match: {tags: req.params.evento}},
+                               {$group: {_id: "$category_name", propostas: {$sum: 1}, votos: {$sum: "$supports"}}}])
+        console.log('totalCategoriaEvento ',propostas)
+        res.status(200).json(propostas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.get('/totalDataEvento/:evento', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");   
+    try {
+        const propostas = await Propostas.aggregate([
+            // {$match: {tags: req.params.evento}},
+            // { $project : 
+            //     {
+            //     "$published_at": 1,
+            //     "$supports": 1,
+            //     data: { $substr: [ "$published_at", 0, 10 ] }
+            //     },
+            // },            
+            // {$group: {_id: "$data", propostas: {$sum: 1}, votos: {$sum: "$supports"}}},
+            // {$sort : {published_at: -1} },])
+
+            // db.propostas.aggregate(
+            //     [
+                  {$match: {tags: req.params.evento}},
+                  {
+                    $project:
+                       {
+                         publishe_at: 1,
+                         supports: 1,
+                         yearSubstring: { $concat: [ { $substr: [ "$published_at", 6, 4 ]}, {$substr: [ "$published_at", 3, 2 ]}, {$substr: [ "$published_at", 0, 2 ]}] },
+                       }
+                   },
+                   {$group: {_id: "$yearSubstring", propostas: {$sum: 1}, votos: {$sum: "$supports"}}},
+                   {$sort : {published_at: 1} }
+                ]
+             )
+
+
+
+
+
+        console.log('totalDataEvento ',propostas)
+        res.status(200).json(propostas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+
 
 router.get('/categoria/:categoria', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -33,6 +195,17 @@ router.get('/categoria/:categoria', (req, res) => {
             res.status(500).send(error);
         })
     })
+
+    router.get('/categoriaName/:categoria', (req, res) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        console.log('req.params.categoria =' + req.params.categoria)
+            Propostas.find({ category_name: req.params.categoria }).then((propostas) => {
+                //res.send(propostas);
+                res.status(200).json(propostas)
+            }).catch((error) => {
+                res.status(500).send(error);
+            })
+        })    
 
 router.get('/deate/:de/:ate', async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");        
@@ -105,9 +278,11 @@ router.get('/busca/:query/:evento', function(req, res, next) {
    
        if (evento === '2') { escopo = 'ppaparticip'}
        if (evento === '3') { escopo = 'confjuv4'}
-   
+
        if (query === 'x') {campo = escopo}
        else {campo = query + ' ' + escopo;}
+
+       if (evento === '1') {campo = query}
 
        campo = campo.split(' ');
        //let campo = query + ' ' + escopo; 
@@ -117,6 +292,7 @@ router.get('/busca/:query/:evento', function(req, res, next) {
        console.log('query simplify=',query, '...', campo, '...')
 
        Propostas.find({tags: {$all: campo }}).then((propostas) => {
+                        console.log('.........',propostas.length)
                         res.send(propostas);
                         })
                     .catch((error) => {

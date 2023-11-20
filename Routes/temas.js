@@ -13,6 +13,26 @@ router.get('/', async (req, res) => {
     }
 })
 
+router.get('/evento/:evento', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");        
+    console.log('req.params.evento=', req.params.evento);
+
+    // Temas.find({evento: req.params.evento}).then((tema) => {
+    //     res.send(tema);
+    // }).catch((error) => {
+    //     res.status(500).send(error);
+    // })
+
+
+
+    try {
+        const temas = await Temas.find({evento: req.params.evento});
+        res.status(200).json(temas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
 router.get('/deate/:de/:ate', async (req, res) => {
     // res.setHeader("Access-Control-Allow-Origin", "*");        
     let de = req.params.de;
