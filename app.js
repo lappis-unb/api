@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const Users = require('./model/user');
 
+require('dotenv').config();
+
 console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
 
 mongoose.connection.on('error', (err) => {

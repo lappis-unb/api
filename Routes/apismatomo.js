@@ -4,8 +4,7 @@ const router = express.Router();
 const Matomo = require('../model/matomo');
 
 //# Configurações da API do Matomo
-const matomo_url = 'https://ew.dataprev.gov.br/'
-
+const matomo_url = process.env.MATOMO_URL; 
 
 router.post('/create', async (req, res) => {
     let matomo = new Matomo({
@@ -31,10 +30,10 @@ router.post('/requisicao', async (req, res) => {
 
     const params = new URLSearchParams(
         [['module', 'API'], ['method', api],
-        ['idSite', 18], ['period', 'day'], 
-        ['date', data], ['format', 'json'], ['token_auth', 'f9c991965a9c6f706b348bb501907170']]);     
+        ['idSite', process.env.MATOMO_ID_SITE], ['period', 'day'], 
+        ['date', data], ['format', 'json'], ['token_auth', process.env.MATOMO_TOKEN]]);     
 
-        console.log(matomo_url, ' ', params)        
+        // console.log(matomo_url, ' ', params)        
     try {            
         var res1;
         await axios.get(matomo_url, { params })
@@ -83,10 +82,10 @@ router.post('/requisicaogravando', async (req, res) => {
 
         let params = new URLSearchParams(
             [['module', 'API'], ['method', api],
-            ['idSite', 18], ['period', 'day'], 
-            ['date', data], ['format', 'json'], ['token_auth', 'f9c991965a9c6f706b348bb501907170']]);     
+            ['idSite', process.env.MATOMO_ID_SITE], ['period', 'day'], 
+            ['date', data], ['format', 'json'], ['token_auth', process.env.MATOMO_TOKEN]]);     
     
-            console.log(matomo_url, ' ', params)        
+            // console.log(matomo_url, ' ', params)        
 
             await axios.get(matomo_url, { params })
             .then(resposta => {
