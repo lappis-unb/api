@@ -60,6 +60,7 @@ router.post('/requisicaogravando', async (req, res) => {
     console.log('requisicaogravando ', req.body)
     var api = req.body.api; 
     var data = req.body.data;
+    var limit = req.body.limite;
 
     // var labelsDados = 
     // ["2023-05-10","2023-05-11","2023-05-12","2023-05-13","2023-05-14","2023-05-15","2023-05-16","2023-05-17","2023-05-18","2023-05-19","2023-05-20",
@@ -76,16 +77,23 @@ router.post('/requisicaogravando', async (req, res) => {
     var res1;
 
     // labelsDados.map( async (data) => {
-        console.log('.',data,'.');
+
+         console.log('.',data,'.');
+        // if (data.indexOf("{") !== -1) {
+        //     let aux = data.substr((data.indexOf("{") + 1),(data.length),'_');
+        //     limit = aux;
+        //     data = data.substr(0,(data.indexOf("{")));
+        //     console.log('.',data,'.',aux,'_');
+        // }
 
         // setTimeout(() => {  console.log('Esperando ...'); }, 2000);
 
         let params = new URLSearchParams(
             [['module', 'API'], ['method', api],
-            ['idSite', process.env.MATOMO_ID_SITE], ['period', 'day'], 
+            ['idSite', process.env.MATOMO_ID_SITE], ['period', 'day'], ['filter_limit', limit],
             ['date', data], ['format', 'json'], ['token_auth', process.env.MATOMO_TOKEN]]);     
     
-            // console.log(matomo_url, ' ', params)        
+             console.log(matomo_url, ' ', params)        
 
             await axios.get(matomo_url, { params })
             .then(resposta => {
@@ -93,7 +101,7 @@ router.post('/requisicaogravando', async (req, res) => {
          //       console.log(resposta.data); // JSON.stringify(res))
                 //res1 = JSON.stringify(res)
                 //res1 = JSON.parse(res)
-                //console.log(api + '> ' + resposta.data);
+               // console.log(api + '> ' + res1);
   
             })
             .catch (error => {
