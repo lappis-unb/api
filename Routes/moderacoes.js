@@ -4,9 +4,10 @@ const Moderacoes = require('../model/moderacao');
 const { ObjectId } = require('mongodb');
 
 router.get('/', async (req, res) => {
+    console.log('chegou aqui!')
     res.setHeader("Access-Control-Allow-Origin", "*");        
     try {
-        const moderacoes = await Moderacoes.find({}).limit(100);
+        const moderacoes = await Moderacoes.find({}).limit(1000);
         res.status(200).json(moderacoes)
     } catch (err) {
         res.status(500).json(err);

@@ -94,5 +94,31 @@ router.get('/id/:id', (req, res) => {
 //         res.status(500).json(err);
 //     }
 // })
+router.post('/create', async (req, res) => {
+    let dados = req.body;
+    console.log('dados moderação: ',dados)
+    let propostaModeracao = new PropostaModeracao(
+        dados 
+    );    
+    try {
+        const propostaModeracaoCadastrada = await propostaModeracao.save();
+        // usuarioCadastrado.password = undefined
+        res.status(200).json(propostaModeracaoCadastrada)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.get('/propostaid/:proposta_id', (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    console.log('PropostaModeracao _id req.params.proposta_id =' + req.params.proposta_id);
+        PropostaModeracao.find({ id_proposta: req.params.proposta_id }).then((moderacoes) => {                    
+                    console.log(moderacoes);
+                    res.status(200).json(moderacoes)
+            }).catch((error) => {
+                    res.status(500).send(error);
+            })        
+
+    }) 
 
 module.exports = router;

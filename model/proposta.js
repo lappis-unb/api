@@ -21,7 +21,18 @@ const propostas1Schema = new Schema({
     published_at: String,
     url: String,
     is_amend: Boolean,
-    tags: []
+    tags: [],
+    estado: Number,
+    bairro: String,
+    cep: String, 
+    complemento: String,
+    ddd: String,
+    gia: String,
+    ibge: String,
+    localidade: String,
+    logradouro: String,
+    siafi: String,
+    uf: String,
     });    
 // }, { collection: "propostas1" });
 

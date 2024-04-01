@@ -1,3 +1,211 @@
+
+## API - Aplicação Backend Rest Api
+
+Aplicação backend REST API com NodeJS, em Javascript, usando Express e MongoDB
+
+
+
+## Referência
+
+ - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
+ - [Awesome README](https://github.com/matiassingers/awesome-readme)
+ - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
+
+
+## Documentação da API
+
+### Endpoints disponíveis
+
+
+| API - Método   | Endpoint: - Exemplo usando a VM Lappis (IP:Porta 164.41.98.12:6380)     | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+|  `GET` Motor de Busca| `http://164.41.98.12:6380/propostas/busca/saude%2004-10-2023/3` | Todas propostas que possuem o termo 'saude' na data '04/10/2023' no processo participativo 3.|
+| `GET` Propostas | `http://164.41.98.12:6380/propostas` | Todas propostas (100 - paginação *) |
+| `GET` | `http://164.41.98.12:6380/propostas/total` | Número total de propostas|
+| `GET` | `http://164.41.98.12:6380/propostas/totalEvento/3` | Total de propostas, votos e id do evento 3|
+| `GET` | `http://164.41.98.12:6380/propostas/totalCategoria` | Total de propostas, votos e id de todas as categorias|
+| `GET` | `http://164.41.98.12:6380/propostas/totalCategoriaEvento/confjuv4` | Total de propostas, votos e id das categorias do evento 'confjuv4'|
+| `GET` | `http://164.41.98.12:6380/propostas/totalDataEvento/confjuv4` | Total de propostas, votos e id das datas do evento 'confjuv4'|
+| `GET` | `http://164.41.98.12:6380/propostas/totalDatas` | Total de propostas e votos por data|
+| `GET` | `http://164.41.98.12:6380/propostas/propostasData` | Propostas por data de publicação|
+| `GET` | `http://164.41.98.12:6380/propostas/categoria/20` | Propostas da categoria cujo ID é 20|
+| `GET` | `http://164.41.98.12:6380/propostas/categoriaName/Outros` | Propostas da categoria cujo Nome é 'Outros'|
+| `GET` | `http://164.41.98.12:6380/propostas/deate/1/5` | As propostas de 1 até 5|
+| `GET` | `http://164.41.98.12:6380/propostas/6540b4ef2e100633ecac30e0` | Proposta cujo campo _id é igual a "6540b4ef2e100633ecac30e0"|
+| `GET` | `http://164.41.98.12:6380/propostas/id/1` | Proposta cujo campo id é igual a '1'|
+| `POST` | `http://164.41.98.12:6380/propostas/create` | Proposta novo registro - jason enviado no body|
+| `POST` | `http://164.41.98.12:6380/propostas/create` | Proposta novo registro - json enviado no body|
+| `GET`  | `http://164.41.98.12:6380/propostas/logs/:id` | Proposta - registros de atualizações da proposta|
+| `POST` | `http://164.41.98.12:6380/propostas/update` | Proposta - atualiza dados da proposta e grava log|
+| `POST` | `http://164.41.98.12:6380/propostas/updatevoto` | Proposta - registra voto e dados relacionados|
+| `GET` | `http://164.41.98.12:6380/propostas/propostavotos/:proposta_id` | Proposta - busca registros de votos|
+| `POST` | `http://164.41.98.12:6380/propostas/statusvoto` | Proposta - atualiza quantidade de votos na proposta|
+| `POST` | `http://164.41.98.12:6380/propostas/status` | Proposta - atualiza o estado da proposta|
+| `POST` | `http://164.41.98.12:6380/propostas/commnents` | Proposta - atualiza a quantidade de comentarios da proposta|
+| `GET` Comentários | `http://164.41.98.12:6380/propostacomentarios` | Todos os comentários (1000 - paginação *) |
+| `GET` | `http://164.41.98.12:6380/propostacomentarios/total` | Número total de comentários|
+| `GET` | `http://164.41.98.12:6380/propostacomentarios/6540b5072e100633ecac5ae1` | Comentário cujo campo _id é igual a "6540b5072e100633ecac5ae1"|
+| `GET` | `http://164.41.98.12:6380/propostacomentarios/id/1` | Comentário cujo campo id é igual a '1'|
+| `GET` | `http://164.41.98.12:6380/propostacomentarios/proposta/11622` | Comentários da proposta 11622|
+| `POST` | `http://164.41.98.12:6380/propostacomentarios/create` | Comentário novo registro - json enviado no body|
+| `GET` Moderação | `http://164.41.98.12:6380/propostamoderacao` | Todos os comentários (1000 - paginação *) |
+| `GET` | `http://164.41.98.12:6380/propostamoderacao/total` | Termos moderados em propostas|
+| `GET` | `http://164.41.98.12:6380/propostamoderacao/65bfbe1afe159b854e9dcec9` | Moderação cujo campo _id é igual a "65bfbe1afe159b854e9dcec9"|
+| `GET` | `http://164.41.98.12:6380/propostamoderacao/propostaid/65bfbdf8fe159b854e9dcebc` | Moderações proposta 65bfbdf8fe159b854e9dcebc|
+| `POST` | `http://164.41.98.12:6380/propostamoderacao/create` | Moderação novo registro - json enviado no body|
+| `GET` Termo Moderado | `http://164.41.98.12:6380/moderacoes` | Todos os Termos Moderados (1000 - paginação *) |
+| `GET` | `http://164.41.98.12:6380/moderacoes/total` | Termos moderados em propostas|
+| `GET` | `http://164.41.98.12:6380/moderacoes/id/1` | Termo Moderador cujo campo id é igual a "1"|
+| `POST` | `http://164.41.98.12:6380/moderacoes/atualiza` | A partir do Termo Moderador, identifica todas as propostas que o possuem |
+| `POST` | `http://164.41.98.12:6380/moderacoes/create` | Termo Moderador novo registro - json enviado no body|
+
+
+
+
+## Apêndice
+
+Collection (Insomnia_2024-03-30.json) - requisições usando Insomnia
+
+| VM - Lappis | IP:Porta 164.41.98.12:6380)   |                            |
+| :---------- | :--------- | :---------------------------------- |
+| Localhost   | (IP:Porta localhost:4040)     | |
+
+
+
+
+## Demonstração
+
+Insira um gif ou um link de alguma demonstração
+
+
+## Deploy
+
+Para fazer o deploy desse projeto rode
+
+```bash
+  npm run deploy
+```
+
+
+## Documentação
+
+[Documentação](https://link-da-documentação)
+
+
+## Variáveis de Ambiente
+
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+
+`NODE_ENV`=development
+
+`SERVER_PORT`=4040
+
+`DB_HOST=DB`
+`DB_PORT=27018`
+`DB_NAME=http_app`
+`DB_USER=nodeauth`
+`DB_PASS=nodeauth`
+
+//# Configurações da API do Matomo
+
+`MATOMO_URL` = 'https://ew.dataprev.gov.br/'
+`MATOMO_ID_SITE` = 18
+`MATOMO_TOKEN` = ...
+
+## Funcionalidades
+
+- Temas dark e light
+- Preview em tempo real
+- Modo tela cheia
+- Multiplataforma
+
+
+## Licença
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+
+## Relacionados
+
+Projeto relacionado - aplicação cliente
+
+[App-Web](http://164.41.98.12:1883)
+
+
+## Roadmap
+
+- Melhorar o suporte de navegadores
+
+- Adicionar mais integrações
+
+
+## Rodando localmente
+
+Clone o projeto
+
+```bash
+  git clone https://gitlab.com/lappis-unb/decidimbr/api.git
+```
+
+Entre no diretório do projeto
+
+```bash
+  cd api
+```
+
+Instale as dependências
+
+```bash
+  npm install
+```
+
+Inicie o servidor
+
+```bash
+  npm run start   ou   node app.js
+```
+
+
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Suporte
+
+Para suporte, mande um email para fake@fake.com ou entre em nosso canal do Slack.
+
+
+## Stack utilizada
+
+**Front-end:** React, Redux, TailwindCSS
+
+**Back-end:** Node, Express
+
+
+## Rodando os testes
+
+Para rodar os testes, rode o seguinte comando
+
+```bash
+  npm run test
+```
+
+
+## Uso/Exemplos
+
+```javascript
+import Component from 'my-project'
+
+function App() {
+  return <Component />
+}
+```
+
+
+
+
+
 # API
 
 ## Redigir documentação da API

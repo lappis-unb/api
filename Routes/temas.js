@@ -93,13 +93,18 @@ router.post('/create', async (req, res) => {
 
 router.post('/login', async (req, res) => {
         let email = req.body.email
-        let password = req.body.password        
+        let password = req.body.password   
+        let user = { "user": {"email": email, "password": password} }     
+    console.log('user:', user )
+    let resposta 
 
-            fetch('https://brasilparticipativo.presidencia.gov.br/api/sign_in', { email, password })
-            .then(response => response.json())
-            .then(data => console.log(data))
+            fetch('https://brasilparticipativo.presidencia.gov.br/api', { user })
+            // .then(response => response.json())
+            .then(response => {console.log('response===',response)})
+            .then(data => {resposta = data; console.log(data)})
             .catch(error => console.log(error))
-        
+            
+            res.status(500).resposta;
 })
 
 module.exports = router;
