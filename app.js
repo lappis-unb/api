@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const Users = require('./model/user');
 
+const session = require('express-session')
+
 require('dotenv').config();
 
 console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
@@ -20,8 +22,14 @@ mongoose.connection.on('connected', () => {
     console.log('Aplicação conectada ao banco de dados!')
 })
 
-app.use(cors());
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+  }))
 
+app.use(cors());
 
 app.use(express.json());
 app.use(bodyParser.json({ limit: "50mb" }));

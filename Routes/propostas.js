@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Propostas = require('../model/proposta');
+
+const PropostasLog = require('../model/propostaLog');
+const PropostasVoto = require('../model/propostaVoto');
 const Estatisticas = require('../model/estatistica');
 const { ObjectId } = require('mongodb');
 
@@ -172,18 +175,72 @@ router.get('/totalDataEvento/:evento', async (req, res) => {
                 ]
              )
 
+       //console.log('totalDataEvento ',propostas)
+        res.status(200).json(propostas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+//-------------------------------------------------------------------------------------------------CPPS
+router.get('/propostasData', async (req, res) => {
+    //console.log('Entrou aqui - propostasData');
+    res.setHeader("Access-Control-Allow-Origin", "*");   
+    try {
+        const propostas = await //Propostas.find().sort({published_at: -1}).limit(10); 
+
+        Propostas.aggregate(
+            [
+              {
+                $project:
+                   {
+                     id: 1,
+                     published_at: 1,
+                     category_name: 1,  
+                     title: 1,
+                     body: 1,
+                     publishe_at: 1,
+                     supports: 1,
+                     yearSubstring: { $concat: [ {$substr: [ "$published_at", 6, 4 ]}, 
+                                                 {$substr: [ "$published_at", 3, 2 ]}, 
+                                                 {$substr: [ "$published_at", 0, 2 ]}
+                                                ] },
+                   }
+               },
+               {$sort : {yearSubstring: -1} }
+            ]
+         ).limit(1000)
 
 
-
-
-        console.log('totalDataEvento ',propostas)
+        //console.log('propostaData ',propostas)
         res.status(200).json(propostas)
     } catch (err) {
         res.status(500).json(err);
     }
 })
 
+router.get('/totalDatas', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");   
+    try {
+        const propostas = await Propostas.aggregate([
+                  {
+                    $project:
+                       {
+                         published_at: 1,
+                         supports: 1,
+                         yearSubstring: { $concat: [ { $substr: [ "$published_at", 6, 4 ]}, {$substr: [ "$published_at", 3, 2 ]}, {$substr: [ "$published_at", 0, 2 ]}] },
+                       }
+                   },
+                   {$group: {_id: "$yearSubstring", propostas: {$sum: 1}, votos: {$sum: "$supports"}}},
+                   {$sort : {_id: -1} }
+                ]
+             ).limit(1000)
+        res.status(200).json(propostas)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 
+//-------------------------------------------------------------------------------------------------CPPS
 
 router.get('/categoria/:categoria', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -224,7 +281,7 @@ router.get('/deate/:de/:ate', async (req, res) => {
 
 router.get('/:id', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    console.log('req.params.id =' + req.params.id)
+    console.log('/:id req.params.id =' + req.params.id)
         Propostas.findById(req.params.id).then((proposta) => {
             console.log(proposta)
             res.send(proposta);
@@ -235,7 +292,7 @@ router.get('/:id', (req, res) => {
 
 router.get('/id/:id', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    console.log('req.params.id =' + req.params.id)
+    console.log('/id/:id req.params.id =' + req.params.id)
         Propostas.find({id: req.params.id}).then((proposta) => {
             res.send(proposta);
         }).catch((error) => {
@@ -243,21 +300,159 @@ router.get('/id/:id', (req, res) => {
         })
     })
 
-// router.post('/create', async (req, res) => {
-//     let propostas = new Propostas({
-//         template: req.body.template, 
-//         assunto: req.body.assunto,
-//         texto: req.body.texto,
-//         tipo: req.body.tipo
-//     });    
-//     try {
-//         const mensagemCadastrada = await mensagem.save();
-//         // usuarioCadastrado.password = undefined
-//         res.status(200).json(mensagemCadastrada)
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// })
+router.post('/create', async (req, res) => {
+    let dados = req.body;
+    console.log('/create req.body: ',req.body.bairro)
+    //console.log('req: ',req)
+
+    console.log('dados: ',dados)
+    let proposta = new Propostas(
+        dados 
+    );    
+    try {
+        const propostaCadastrada = await proposta.save();
+        // usuarioCadastrado.password = undefined
+        res.status(200).json(propostaCadastrada)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.get('/logs/:id', async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    console.log('/id/:id req.params.id =' + req.params.id)
+        await PropostasLog.find({id_proposta: req.params.id}).then((propostaLog) => {
+            res.send(propostaLog);
+        }).catch((error) => {
+            res.status(500).send(error);
+        })
+    })
+
+
+router.post('/update', async (req, res) => {
+    let dados = req.body;
+    let propostaAtualizada = dados.propostaAtualizada;
+    // propostaAtualizada.estado = dados.estado;
+    let propostaEstadoAnterior = dados.propostaEstadoAnterior;
+    console.log('/update req.body: ',req.body)
+    console.log('dados.propostaAtualizada: ',dados.propostaAtualizada);
+    console.log('dados.estado: ',dados.estado);
+    console.log('dados.texto: ',dados.texto);
+    console.log('dados.propostaEstadoAnterior: ',dados.propostaEstadoAnterior);
+
+    let propostaLog = new PropostasLog({
+        data_log: new Date(),
+        id_proposta: propostaAtualizada._id,
+        id_usuario: 'idZero',
+        nome_usuario: 'Nome do Usuário',
+        texto: dados.texto,        
+        proposta_anterior: propostaEstadoAnterior
+        }
+    );    
+    console.log('propostaLog=',propostaLog);
+    try {
+        const propostaLogCadastrada = await propostaLog.save();
+        // usuarioCadastrado.password = undefined
+        res.status(200).json(propostaLogCadastrada)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+
+    // try {
+    //     Propostas.updateOne({ _id: ObjectId(propostaAtualizada._id) }, {
+    //         $set: { "estado": dados.estado }
+    //         })
+    // } catch (err) {
+    //     res.status(500).json(err);
+    // }
+
+})
+
+router.post('/updatevoto', async (req, res) => {
+    let dados = req.body;
+    console.log('/updatevoto req.body: ',req.body)
+    let propostaVoto = new PropostasVoto({
+        data_log: new Date(),
+        id_proposta: dados.id_proposta,
+        id_usuario: 'idZero',
+        nome_usuario: 'Nome do Usuário',
+        tipo: dados.tipo,        
+        texto: dados.texto,
+        }
+    );    
+    console.log('propostaVoto=',propostaVoto);
+    try {
+        const propostaVotoCadastrada = await propostaVoto.save();
+        res.status(200).json(propostaVotoCadastrada)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+
+router.get('/propostavotos/:proposta_id', (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    console.log('votos:: _id req.params.proposta_id =' + req.params.proposta_id);
+    PropostasVoto.find({ id_proposta: req.params.proposta_id }).then((propostasVoto) => {                    
+        res.status(200).json(propostasVoto)
+        }).catch((error) => {
+            res.status(500).send(error);
+        })        
+    })  
+
+router.post('/statusvoto', async (req, res) => {
+    let dados = req.body;
+    console.log('/update req.body: ',req.body)
+    console.log('dados.id_proposta: ',dados.id_proposta)    
+try {
+    // Update the first document that matches the filter
+    const result = await Propostas.updateOne({ "_id": dados.id_proposta }, {
+            $inc: { supports: 1}
+        })
+        console.log(' ok ',result)    
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.post('/status', async (req, res) => {
+    let dados = req.body;
+    console.log('/update req.body: ',req.body);
+    console.log('dados.id_proposta: ',dados.id_proposta)
+    console.log('dados.estado: ',dados.estado);
+
+    try {
+
+    // Update the first document that matches the filter
+    const result = await Propostas.updateOne({ "_id": dados.id_proposta }, {
+            $set: { "estado": dados.estado }
+            })
+        console.log(' ok ',result)    
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.post('/comments', async (req, res) => {
+    let dados = req.body;
+    console.log('/update req.body: ',req.body);
+    console.log('dados.id_proposta: ',dados.id_proposta)
+    console.log('dados.estado: ',dados.estado);
+
+    try {
+
+    // Update the first document that matches the filter
+    const result = await Propostas.updateOne({ "_id": dados.id_proposta }, {
+            $inc: { comments: 1}
+        })
+        console.log(' ok ',result)    
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 
 router.get('/busca/:query/:evento', function(req, res, next) {
 
@@ -278,6 +473,7 @@ router.get('/busca/:query/:evento', function(req, res, next) {
    
        if (evento === '2') { escopo = 'ppaparticip'}
        if (evento === '3') { escopo = 'confjuv4'}
+       if (evento === '4') { escopo = 'cppd'}
 
        if (query === 'x') {campo = escopo}
        else {campo = query + ' ' + escopo;}

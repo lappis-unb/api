@@ -12,7 +12,9 @@ const propostasComentarioSchema = new Schema({
     depth: Number,
     commentable_id: Number,
     commentable_type: String,
-    root_commentable_url: String
+    root_commentable_url: String,
+    id_proposta: String,
+    tags: []
     });    
 // }, { collection: "propostas1" });
 
