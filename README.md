@@ -1,10 +1,11 @@
-
 ## API - Aplicação Backend Rest Api
 
-Aplicação backend REST API com NodeJS, em Javascript, usando Express e MongoDB
+Aplicação backend REST API com NodeJS, usando Javascript, Express e MongoDB
 
 
-## Documentação da API
+
+
+## Exemplos de uso
 
 ### Endpoints disponíveis
 
@@ -58,16 +59,16 @@ Aplicação backend REST API com NodeJS, em Javascript, usando Express e MongoDB
 
 Collection (Insomnia_2024-03-30.json) - requisições usando Insomnia
 
-| VM - Lappis | IP:Porta 164.41.98.12:6380)   |                            |
+| VM - Lappis | IP:Porta > 164.41.98.12:6380)   |                            |
 | :---------- | :--------- | :---------------------------------- |
-| Localhost   | (IP:Porta localhost:4040)     | |
+| Localhost   | (IP:Porta > localhost:4040)     | |
 
 
 
 
 ## Demonstração
 
-Insira um gif ou um link de alguma demonstração
+
 
 
 ## Deploy
@@ -81,7 +82,7 @@ Para fazer o deploy desse projeto rode
 
 ## Documentação
 
-[Documentação](https://link-da-documentação)
+[Apresentação do Projeto](https://planaltopr-my.sharepoint.com/:p:/g/personal/jcangst_presidencia_gov_br/EXUahfvEe85FgdAsN-034jABmeluJKWOAJ0fi1hVDASfGA?e=9shB7n)
 
 
 ## Variáveis de Ambiente
@@ -104,14 +105,6 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 `MATOMO_ID_SITE` = 18
 `MATOMO_TOKEN` = ...
 
-## Funcionalidades
-
-- Temas dark e light
-- Preview em tempo real
-- Modo tela cheia
-- Multiplataforma
-
-
 ## Licença
 
 [MIT](https://choosealicense.com/licenses/mit/)
@@ -122,13 +115,6 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 Projeto relacionado - aplicação cliente
 
 [App-Web](http://164.41.98.12:1883)
-
-
-## Roadmap
-
-- Melhorar o suporte de navegadores
-
-- Adicionar mais integrações
 
 
 ## Rodando localmente
@@ -163,36 +149,11 @@ Inicie o servidor
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
 
-## Suporte
-
-Para suporte, mande um email para fake@fake.com ou entre em nosso canal do Slack.
-
-
 ## Stack utilizada
 
-**Front-end:** React, Redux, TailwindCSS
+**Front-end:** React, Javascript, MongoDB 
 
-**Back-end:** Node, Express
-
-
-## Rodando os testes
-
-Para rodar os testes, rode o seguinte comando
-
-```bash
-  npm run test
-```
-
-
-## Uso/Exemplos
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
-```
+**Back-end:** Nodejs, Express, MongoDB 
 
 
 
