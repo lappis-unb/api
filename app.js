@@ -1,10 +1,11 @@
-
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const Users = require('./model/user');
+const https = require('https')
 
 const session = require('express-session')
 
@@ -34,6 +35,11 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
+
+/* Middlewares */
+// app.use(bodyParser.json())
+// app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 //Body Parser
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
@@ -57,9 +63,17 @@ const reunioesRoute = require('./Routes/reunioes');
 const estatisticasRoute = require('./Routes/estatisticas');
 const apimatomoRoute = require('./Routes/apismatomo');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
+//Uso do swagger 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 //  mongoose.connect(
 //     'mongodb://db/http_app', 
 //     {useNewUrlParser: true, useUnifiedTopology: true }); 
+
+
 
     mongoose.connect(
         'mongodb://127.0.0.1:27017/http_app', 
@@ -81,6 +95,30 @@ app.use('/reunioes', reunioesRoute);
 app.use('/estatisticas', estatisticasRoute);
 app.use('/apimatomo', apimatomoRoute);
 
-app.listen(4040, () => console.log("Server is running - port 4040"));
+const options = {
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.crt'),
+  };
+
+https.createServer(
+    // {
+    //     key: fs.readFileSync('server.key'),
+    //     cert: fs.readfileSync('server.crt')
+    // }
+    options ,
+    app
+).listen(4040, () => console.log("App disponível em https:// Server is running - port 4040"));
+
+
+// const options = {
+//     key: fs.readFileSync('server.key'),
+//     cert: fs.readFileSync('server.crt'),
+//   };
+  
+//   https.createServer(options, (req, res) => {
+//     res.writeHead(200);
+//     res.end(`hello world\n`);
+//   }, app ).listen(4040, () => console.log("App disponível em https:// Server is running - port 4040"));
+
 
 module.exports = app;
