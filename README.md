@@ -9,7 +9,7 @@ Aplicação backend REST API com NodeJS, usando Javascript, Express e MongoDB
 
 ## Exemplos de uso
 
-###   https://164.41.98.12:3000
+###   https://164.41.98.12:1883
 
 ### Endpoints disponíveis
 
