@@ -3,9 +3,13 @@
 Aplicação backend REST API com NodeJS, usando Javascript, Express e MongoDB
 
 
+## Documentação Swagger:
 
+###   https://164.41.98.12:6380/api-docs
 
 ## Exemplos de uso
+
+###   https://164.41.98.12:3000
 
 ### Endpoints disponíveis
 
